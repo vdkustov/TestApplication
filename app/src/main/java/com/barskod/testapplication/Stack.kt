@@ -14,7 +14,26 @@ open class Stack {
     }
 
     open fun pop(): Char? {
-        return array[position--]
+        return array[--position]
     }
+
+    open fun comparePriority(op: Char): Boolean {
+        return (opPriority(op) > opPriority(array[position-1]))
+    }
+
+    /* Get priority of operation */
+    private fun opPriority(op: Char?): Int {
+        return when (op) {
+            '(' -> 0
+            ')' -> 1
+            '+' -> 2
+            '-' -> 2
+            '*' -> 3
+            '/' -> 3
+            else -> -1
+        }
+    }
+
+    open fun isEmpty() = (position == 0)
 
 }

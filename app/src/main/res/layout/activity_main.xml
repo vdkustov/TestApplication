@@ -21,8 +21,8 @@
         android:layout_centerVertical="true"
         android:layout_margin="16dp"
         android:hint="Введите выражение"
-        android:inputType="textPersonName"
-        android:digits="1234567890+-*/"/>
+        android:inputType="text"
+        android:digits="1234567890+-*/()" />
 
     <TextView
         android:id="@+id/textView"
