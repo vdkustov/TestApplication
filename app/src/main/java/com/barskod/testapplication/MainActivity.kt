@@ -21,25 +21,47 @@ class MainActivity : AppCompatActivity() {
 
     /* Calculate expression */
     private fun calc(input: String): String {
-        var notation = toReversePolishNotation(input)
-        var output = notation
-        for (i in 0..notation?.length) {
+        var rpn = invertStack(toRPN(input))
+        var result = Stack()
 
+        while(!rpn.isEmpty()) {
+            var item = rpn.pop()
+            if(!item.isEmpty()) {
+                if(item[0].isDigit()) {
+                    result.push(item)
+                    continue
+                }
+
+                var num2 = result.pop().toInt()
+                var num1 = result.pop().toInt()
+
+                result.push(when(item[0]) {
+                    '+' -> num1+num2
+                    '-' -> num1-num2
+                    '*' -> num1*num2
+                    '/' -> num1/num2
+                    else -> 0
+                }.toString())
+            }
         }
-        return output
+
+        return result.pop()
     }
 
     /* Make string expression to reverse polish notation */
-    private fun toReversePolishNotation(exp: String): String {
-        var result = ""
-        var stack = Stack()
+    private fun toRPN(expr: String): Stack {
+        var result = Stack()
+        var stack = SymbolsStack()
+        var buffer = ""
 
-        for(ch: Char in exp) {
+        for(ch: Char in expr) {
             if(ch.isDigit()) {
-                result += ch
+                buffer += ch.toString()
                 continue
             }
 
+            result.push(buffer)
+            buffer = ""
             if(stack.isEmpty() || ch == '(') {
                 stack.push(ch)
             } else if(ch == ')') {
@@ -47,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                     var last = stack.pop()
                     when(last) {
                         '(' -> break@loop
-                        else -> result += last
+                        else -> result.push(last.toString())
                     }
                 }
             } else {
@@ -56,7 +78,9 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     while(!stack.isEmpty()) {
                         if(!stack.comparePriority(ch)) {
-                            result += stack.pop()
+                            result.push(stack.pop().toString())
+                        } else {
+                            break
                         }
                     }
                     stack.push(ch)
@@ -64,9 +88,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        result.push(buffer)
         while(!stack.isEmpty()) {
-            result += stack.pop()
+            result.push(stack.pop().toString())
         }
+        return result
+    }
+
+    private fun invertStack(stack: Stack): Stack {
+        var result = Stack()
+        while(!stack.isEmpty()) result.push(stack.pop())
         return result
     }
 }
