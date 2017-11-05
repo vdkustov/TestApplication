@@ -7,51 +7,71 @@ import kotlinx.android.synthetic.main.activity_main.*
 /**
  * Created by vdkustov on 31.10.2017.
  */
-
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        textView.text = "0"
         button.setOnClickListener {
             textView.text = calc(editText.text.toString())
         }
     }
 
-    /* Calculate expression */
+    /**
+     * Calculate expression using Reverse Polish Notation
+     */
     private fun calc(input: String): String {
-        var rpn = invertStack(toRPN(input))
-        var result = Stack()
+        val rpn = invertStack(toRPN(input))
+        val result = Stack()
+        var msgError = ""
 
-        while(!rpn.isEmpty()) {
-            var item = rpn.pop()
-            if(!item.isEmpty()) {
-                if(item[0].isDigit()) {
-                    result.push(item)
-                    continue
+        try {
+            while(!rpn.isEmpty()) {
+                val item = rpn.pop()
+                if(!item.isEmpty()) {
+                    if(item[0].isDigit()) {
+                        result.push(item)
+                        continue
+                    }
+
+                    val num2 = result.pop().toDouble()
+                    val num1 = result.pop().toDouble()
+
+                    if(num2 == 0.0) {
+                        msgError = resources.getString(R.string.msg_error_zero)
+                        break
+                    }
+
+                    @Suppress("IMPLICIT_CAST_TO_ANY")
+                    result.push(when(item[0]) {
+                        '+' -> num1+num2
+                        '-' -> num1-num2
+                        '*' -> num1*num2
+                        '/' -> num1/num2
+                        '%' -> num1%num2
+                        else -> 0
+                    }.toString())
                 }
-
-                var num2 = result.pop().toInt()
-                var num1 = result.pop().toInt()
-
-                result.push(when(item[0]) {
-                    '+' -> num1+num2
-                    '-' -> num1-num2
-                    '*' -> num1*num2
-                    '/' -> num1/num2
-                    else -> 0
-                }.toString())
             }
+        } catch (e: Exception) {
+            msgError = resources.getString(R.string.msg_error_unknown)
         }
 
-        return result.pop()
+        return if(msgError.isEmpty()) {
+            result.pop()
+        } else {
+            msgError
+        }
     }
 
-    /* Make string expression to reverse polish notation */
+    /**
+     * Make input expression to Reverse Polish Notation
+     */
     private fun toRPN(expr: String): Stack {
-        var result = Stack()
-        var stack = SymbolsStack()
+        val result = Stack()
+        val stack = SymbolsStack()
         var buffer = ""
 
         for(ch: Char in expr) {
@@ -66,7 +86,7 @@ class MainActivity : AppCompatActivity() {
                 stack.push(ch)
             } else if(ch == ')') {
                 loop@while(!stack.isEmpty()) {
-                    var last = stack.pop()
+                    val last = stack.pop()
                     when(last) {
                         '(' -> break@loop
                         else -> result.push(last.toString())
@@ -96,7 +116,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun invertStack(stack: Stack): Stack {
-        var result = Stack()
+        val result = Stack()
         while(!stack.isEmpty()) result.push(stack.pop())
         return result
     }

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">TestApplication</string>
+    <string name="input_hint">Input expression&#8230;</string>
+    <string name="btn_name">Calculate</string>
+    <string name="msg_error_zero">Error: Division by zero.</string>
+    <string name="msg_error_unknown">Error: Unknown. Please check is the expression correct.</string>
 </resources>

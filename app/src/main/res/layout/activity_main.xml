@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/editText"
         android:layout_centerHorizontal="true"
-        android:text="Посчитать" />
+        android:text="@string/btn_name" />
 
     <EditText
         android:id="@+id/editText"
@@ -20,9 +20,9 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_margin="16dp"
-        android:hint="Введите выражение"
+        android:hint="@string/input_hint"
         android:inputType="text"
-        android:digits="1234567890+-*/()" />
+        android:digits="1234567890()+-*/%" />
 
     <TextView
         android:id="@+id/textView"
@@ -34,7 +34,6 @@
         android:layout_alignParentTop="true"
         android:layout_margin="16dp"
         android:gravity="center"
-        android:textSize="11pt"
-        android:text="0" />
+        android:textSize="11pt" />
 
 </RelativeLayout>
